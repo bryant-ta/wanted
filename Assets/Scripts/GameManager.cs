@@ -13,12 +13,15 @@ public class GameManager : Singleton<GameManager>
 
     [Header("Guys")] public MinMax levelSpeed;
     public int numGuysPerType;
+    int initialNumGuysPerType;
+    public int numGuysPerTypeScaling;
     public List<GameObject> GuyObjs;
 
     [Header("Other")] public Vector2 levelMinBound;
     public Vector2 levelMaxBound;
     public int hitTargetTimeGain;
     public int missedTargetTimeLost;
+    public Player Player;
 
     private List<GameObject> guyInstances = new();
 
@@ -28,13 +31,16 @@ public class GameManager : Singleton<GameManager>
     {
         Timer = new CountdownTimer(initialTime);
         Timer.EndEvent += Lose;
+        initialNumGuysPerType = numGuysPerType;
     }
 
     public void StartGame()
     {
         Timer.Start();
         InitLevel(level);
-        UIManager.Instance.HideStartScreen();
+        Player.isActive = true;
+        UIManager.Instance.ToggleStartScreenGuyImage(false);
+        UIManager.Instance.ToggleStartScreen(false);
     }
 
     void InitLevel(int level)
@@ -90,15 +96,20 @@ public class GameManager : Singleton<GameManager>
         Timer.AddTime(hitTargetTimeGain);
 
         // Clean up level
+        CleanLevel();
+
+        // Start next level
+        level++;
+        numGuysPerType += numGuysPerTypeScaling;
+        InitLevel(level);
+    }
+
+    void CleanLevel() {
         foreach (GameObject guyInstance in guyInstances)
         {
             Destroy(guyInstance);
         }
         guyInstances.Clear();
-
-        // Start next level
-        level++;
-        InitLevel(level);
     }
 
     public void LoseTime()
@@ -108,6 +119,19 @@ public class GameManager : Singleton<GameManager>
 
     void Lose()
     {
-        print("You LOSE");
+        print("You lose!");
+        // Show score
+        UIManager.Instance.ToggleHighScoreText(true);
+        UIManager.Instance.UpdateHighScoreText(level);
+        UIManager.Instance.UpdateStartScreenGuyImage();
+        
+        // Reset game state
+        Timer.Reset();
+        CleanLevel();
+        level = 0;
+        numGuysPerType = initialNumGuysPerType;
+        Player.isActive = false;
+        UIManager.Instance.ToggleStartScreenGuyImage(true);
+        UIManager.Instance.ToggleStartScreen(true);
     }
 }

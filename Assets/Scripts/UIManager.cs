@@ -10,6 +10,9 @@ public class UIManager : Singleton<UIManager>
     public Image wantedImage;
 
     public Image startScreenImage;
+    public TextMeshProUGUI highScoreText;
+    public Image startScreenGuyImage;
+    public Sprite startScreenGuySprite;
 
     private void Start()
     {
@@ -31,8 +34,23 @@ public class UIManager : Singleton<UIManager>
         wantedImage.sprite = image;
     }
 
-    public void HideStartScreen()
+    public void ToggleStartScreen(bool enabled)
     {
-        startScreenImage.gameObject.SetActive(false);
+        startScreenImage.gameObject.SetActive(enabled);
+    }
+    public void ToggleHighScoreText(bool enabled)
+    {
+        highScoreText.gameObject.SetActive(enabled);
+    }
+    public void UpdateHighScoreText(int level)
+    {
+        highScoreText.text = "$" + level.ToString();
+    }
+    public void ToggleStartScreenGuyImage(bool enabled)
+    {
+        startScreenGuyImage.gameObject.SetActive(enabled);
+    }
+    public void UpdateStartScreenGuyImage() {
+        startScreenGuyImage.sprite = startScreenGuySprite;
     }
 }

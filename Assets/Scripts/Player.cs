@@ -6,6 +6,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private Camera mainCam;
+    public bool isActive;
     
     private void Awake()
     {
@@ -14,7 +15,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetButtonDown("Fire1"))
+        if (isActive && Input.GetButtonDown("Fire1"))
         {
             RaycastHit2D hit = Physics2D.Raycast(mainCam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
             if (hit.collider != null)

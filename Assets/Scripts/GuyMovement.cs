@@ -39,11 +39,16 @@ public class GuyMovement : MonoBehaviour
     {
         Vector3 spritePosition = transform.position;
 
-        float screenLeft = mainCam.ViewportToWorldPoint(new Vector3(0, 0, 0)).x;
-        float screenRight = mainCam.ViewportToWorldPoint(new Vector3(1, 0, 0)).x;
-        float screenTop = mainCam.ViewportToWorldPoint(new Vector3(0, 1, 0)).y;
-        float screenBottom = mainCam.ViewportToWorldPoint(new Vector3(0, 0, 0)).y;
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+        float spriteHalfWidth = spriteRenderer.bounds.extents.x;
+        float spriteHalfHeight = spriteRenderer.bounds.extents.y;
 
+        float screenLeft = mainCam.ViewportToWorldPoint(new Vector3(0, 0, 0)).x - spriteHalfWidth;
+        float screenRight = mainCam.ViewportToWorldPoint(new Vector3(1, 0, 0)).x + spriteHalfWidth;
+        float screenTop = mainCam.ViewportToWorldPoint(new Vector3(0, 1, 0)).y + spriteHalfHeight;
+        float screenBottom = mainCam.ViewportToWorldPoint(new Vector3(0, 0, 0)).y - spriteHalfHeight;
+
+        // Wrap horizontally
         if (spritePosition.x < screenLeft)
         {
             spritePosition.x = screenRight;
@@ -53,6 +58,7 @@ public class GuyMovement : MonoBehaviour
             spritePosition.x = screenLeft;
         }
 
+        // Wrap vertically
         if (spritePosition.y < screenBottom)
         {
             spritePosition.y = screenTop;
